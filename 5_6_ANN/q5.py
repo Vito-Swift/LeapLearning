@@ -1,5 +1,6 @@
 import numpy as np
 import random as rd
+import matplotlib.pyplot as plt
 
 # training data (input / output)
 training_inputs = [[5.1, 3.5, 1.4, 0.2],
@@ -9,7 +10,7 @@ training_inputs = [[5.1, 3.5, 1.4, 0.2],
 training_outputs = [1, 0, 1]
 
 # parameters of neural network
-input_num = 3
+input_num = 4
 hidden_num = 5
 output_num = 2
 
@@ -86,6 +87,7 @@ def update_weights(network, data_input, learning_rate):
 
 # optimizing the weights of the neural network given the input data and output data
 def train_network(network, learning_rate, max_iter, data_inputs, data_outputs):
+    costs = np.zeros(max_iter)
     for i in range(max_iter):
         sum_error = 0
         for j in range(len(data_inputs)):
@@ -96,6 +98,8 @@ def train_network(network, learning_rate, max_iter, data_inputs, data_outputs):
             backward_propagate_error(network, expected)
             update_weights(network, data_inputs[j], learning_rate)
         # print("iteration=%d, learning_rate=%.3f, error=%.3f" % (i, learning_rate, sum_error))
+        costs[i] = sum_error
+    return costs
 
 
 # activation function of forward propagation
@@ -106,9 +110,20 @@ def activate(weights, inputs):
     return activation
 
 
+def plot_cost(cost, max_iters):
+    fig = plt.figure(figsize=(10, 8))
+    x = [i + 1 for i in range(max_iters)]
+    plt.plot(x, cost, linewidth=1, marker='^', color='b')
+    plt.xlabel("Iteration")
+    plt.ylabel("Error")
+    plt.grid()
+    plt.show()
+
+
 def main():
     network = initialize_network()
-    train_network(network, 0.1, 100000, training_inputs, training_outputs)
+    costs = train_network(network, 0.01, 2000, training_inputs, training_outputs)
+    plot_cost(costs, 2000)
     for layer in network:
         print(layer)
 

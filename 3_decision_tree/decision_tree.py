@@ -1,5 +1,6 @@
 import operator
 import pandas as pd
+
 import numpy as np
 
 OutlookIndex = ["Sunny", "Overcast", "Rain"]
@@ -74,6 +75,7 @@ def decision_tree_build(dataset, y):
 
     best_feature = choose_best_feature(dataset)
     best_feature_label = y[best_feature]
+
     decision_tree = {best_feature_label: {}}
     del (y[best_feature])
     feat_values = [entry[best_feature] for entry in dataset]
@@ -91,6 +93,8 @@ def main():
     # dataset = np.concatenate((X, y), axis=1)
     dataset = pd.read_csv('WeatherConditions.csv', delimiter=',')
     y = list(dataset.columns.values)
+    print(dataset)
+    print(y)
     dataset = dataset.values
     tree = decision_tree_build(dataset, y)
     print(tree)

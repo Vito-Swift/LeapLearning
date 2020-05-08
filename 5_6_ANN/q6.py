@@ -1,5 +1,6 @@
 import numpy as np
 import random as rd
+import matplotlib.pyplot as plt
 
 # training data (input / output)
 training_inputs = [
@@ -101,6 +102,7 @@ def update_weights(network, data_input, learning_rate):
 
 # optimizing the weights of the neural network given the input data and output data
 def train_network(network, learning_rate, max_iter, data_inputs, data_outputs):
+    costs = np.zeros(max_iter)
     for i in range(max_iter):
         sum_error = 0
         for j in range(len(data_inputs)):
@@ -110,7 +112,9 @@ def train_network(network, learning_rate, max_iter, data_inputs, data_outputs):
             sum_error += sum([(expected[k] - net_outputs[k]) ** 2 for k in range(output_num)])
             backward_propagate_error(network, expected)
             update_weights(network, data_inputs[j], learning_rate)
-        print("iteration=%d, learning_rate=%.3f, error=%.3f" % (i, learning_rate, sum_error))
+        # print("iteration=%d, learning_rate=%.3f, error=%.3f" % (i, learning_rate, sum_error))
+        costs[i] = sum_error
+    return costs
 
 
 # activation function of forward propagation
@@ -121,15 +125,29 @@ def activate(weights, inputs):
     return activation
 
 
+def plot_cost(cost, max_iters):
+    fig = plt.figure(figsize=(10, 8))
+    x = [i + 1 for i in range(max_iters)]
+    plt.plot(x, cost, linewidth=1, marker='^', color='b')
+    plt.xlabel("Iteration")
+    plt.ylabel("Error")
+    plt.grid()
+    plt.show()
+
+
 def main():
     network_1 = initialize_network()
     network_2 = initialize_network()
 
     print("training network 1")
-    train_network(network_1, 0.1, 10000, training_inputs, training_outputs_1)
+    costs = train_network(network_1, 0.1, 20000, training_inputs, training_outputs_1)
+    # plot_cost(costs, 2000)
 
     print("training network 2")
-    train_network(network_2, 0.1, 10000, training_inputs, training_outputs_2)
+    train_network(network_2, 0.1, 20000, training_inputs, training_outputs_2)
+
+    print(forward_propagation(network_1, [0.4, 0.5, 0.4]))
+    print(forward_propagation(network_2, [0.4, 0.5, 0.4]))
 
 
 if __name__ == '__main__':
